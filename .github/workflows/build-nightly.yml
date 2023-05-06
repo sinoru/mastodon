@@ -21,17 +21,20 @@ jobs:
       prerelease: ${{ steps.version_vars.outputs.mastodon_version_prerelease }}
 
   build-image:
+    name: build-image (${{ name }})
     needs: compute-suffix
     uses: ./.github/workflows/build-container-image.yml
     strategy:
       fail-fast: false
       matrix:
         include:
-          - docker_file: ./Dockerfile
+          - name: mastodon
+            docker_file: ./Dockerfile
             push_to_images: |
               tootsuite/mastodon
               ghcr.io/mastodon/mastodon
-          - docker_file: ./streaming/Dockerfile
+          - name: mastodon/streaming
+            docker_file: ./streaming/Dockerfile
             push_to_images: |
               ghcr.io/mastodon/mastodon/streaming
     with:
