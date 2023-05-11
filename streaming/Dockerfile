@@ -35,7 +35,8 @@ USER mastodon
 WORKDIR /opt/mastodon-streaming
 
 ENV NODE_ENV="production" \
-    BIND="0.0.0.0"
+    BIND="0.0.0.0" \
+    PORT="4000"
 
 # Install dependencies
 run yarn install --pure-lockfile --production --network-timeout 600000 && \
