@@ -1,8 +1,11 @@
 #!/bin/bash
 
-set -e # Fail the whole script on first error
+set -eux # Fail the whole script on first error
+
+source ${NVM_DIR}/nvm.sh --install
 
 # Fetch Ruby gem dependencies
+gem install foreman
 bundle config path 'vendor/bundle'
 bundle config with 'development test'
 bundle install

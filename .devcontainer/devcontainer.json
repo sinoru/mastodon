@@ -5,6 +5,15 @@
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
   "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+        "installZsh": "true",
+        "username": "vscode",
+        "userUid": "1000",
+        "userGid": "1000",
+        "upgradePackages": "true"
+    },
+    "ghcr.io/devcontainers/features/ruby:1": "none",
+    "ghcr.io/devcontainers/features/node:1": "none",
     "ghcr.io/devcontainers/features/sshd:1": {}
   },
 
@@ -34,7 +43,9 @@
   "customizations": {
     "vscode": {
       "settings": {},
-      "extensions": ["EditorConfig.EditorConfig", "webben.browserslist"]
+      "extensions": ["rebornix.Ruby", "EditorConfig.EditorConfig", "webben.browserslist"]
     }
-  }
+  },
+
+  "remoteUser": "vscode"
 }

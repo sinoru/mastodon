@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # args:
+      #   - BASE_IMAGE=gchr.io/mastodon/mastodon/base
     volumes:
       - ../..:/workspaces:cached
     environment:

@@ -1,20 +1,34 @@
-# For details, see https://github.com/devcontainers/images/tree/main/src/ruby
-FROM mcr.microsoft.com/devcontainers/ruby:1-3.2-bullseye
+# syntax=docker/dockerfile:1.4
+ARG BASE_IMAGE="gchr.io/mastodon/mastodon/base"
+ARG NODE_VERSION="20"
 
-# Install Rails
-# RUN gem install rails webdrivers
+FROM ${BASE_IMAGE}
+ARG NODE_VERSION
 
-ARG NODE_VERSION="16"
-RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"
+RUN \
+    --mount=type=cache,target=/var/cache,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=tmpfs,target=/var/log \
+    set -eux; \
+    export DEBIAN_FRONTEND=noninteractive; \
+    # Update apt due to /var/lib/apt/lists is empty
+    apt-get update; \
+    # Install builder dependencies
+    apt-get install -y --no-install-recommends \
+        # Dependencies for runtime
+        file \
+        libjemalloc2 \
+        tzdata \
+        # Dependencies for node-gyp, ruby gem native extensions
+        gcc \
+        git \
+        g++ \
+        make \
+        python3 \
+        # Dependencies for ruby gems
+        libicu-dev \
+        libidn-dev \
+        libpq-dev \
+    ;
 
-# [Optional] Uncomment this section to install additional OS packages.
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends libicu-dev libidn11-dev ffmpeg imagemagick libpam-dev
-
-# [Optional] Uncomment this line to install additional gems.
-RUN gem install foreman
-
-# [Optional] Uncomment this line to install global node packages.
-RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g yarn" 2>&1
-
-COPY welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt
+COPY --link welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt
