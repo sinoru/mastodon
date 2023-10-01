@@ -6,11 +6,14 @@ x-mastodon: &mastodon
   networks:
     - external_network
     - internal_network
-  depends_on: &mastodon-depends_on
+  depends_on:
     db:
-      condition: service_healthy
+      condition: service_started
     redis:
-      condition: service_healthy
+      condition: service_started
+    es:
+      condition: service_started
+      required: false
   volumes:
     - ./public/system:/mastodon/public/system
 
@@ -20,6 +23,11 @@ x-mastodon-streaming: &mastodon-streaming
     context: .
     dockerfile: ./streaming/Dockerfile
   image: ghcr.io/mastodon/mastodon/streaming:v4.2.0
+  depends_on:
+    db:
+      condition: service_started
+    redis:
+      condition: service_started
 
 services:
   db:
@@ -84,11 +92,6 @@ services:
       test: ['CMD-SHELL', 'wget -q --spider --proxy=off localhost:3000/health || exit 1']
     ports:
       - '127.0.0.1:3000:3000'
-    depends_on:
-      <<: *mastodon-depends_on
-      # es:
-      #   condition: service_started
-      #   required: false
 
   streaming:
     <<: *mastodon-streaming
