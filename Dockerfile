@@ -59,10 +59,12 @@ RUN \
     --mount=type=cache,id=${TARGETPLATFORM}-/var/lib/apt,target=/var/lib/apt,sharing=locked \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
-    # Update apt due to /var/lib/apt/lists is empty
+    # Update apt
     apt-get update; \
-    # Install builder dependencies
-    apt-get install -y --no-install-recommends \
+    # Upgrade packages
+    apt-get -yq dist-upgrade; \
+    # Install dependencies
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         # Dependencies for runtime
         file \
         libjemalloc2 \
@@ -73,16 +75,20 @@ RUN \
         libicu72 \
         libidn12 \
         libpq5 \
-    ; \
+    ;
+
+RUN set -eux; \
     # Add mastodon group and user
     groupadd -g "${GID}" mastodon; \
     useradd -u "${UID}" -g "${GID}" -l -m -d "${MASTODON_HOME}" mastodon; \
     # Set bundle configs
-    bundle config set --local deployment 'true'; \
+    bundle config set --local path 'vendor/bundle'; \
     case "${RAILS_ENV}" in \
-        development) bundle config set --local without 'test';; \
         test) bundle config set --local without 'development';; \
-        production) bundle config set --local without 'development test';; \
+        production) \
+            bundle config set --local deployment 'true'; \
+            bundle config set --local without 'development test'; \
+        ;; \
     esac;
 
 ENV MASTODON_HOME="${MASTODON_HOME}" \
@@ -101,8 +107,10 @@ RUN \
     --mount=type=cache,id=${TARGETPLATFORM}-/var/lib/apt,target=/var/lib/apt,sharing=locked \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
+    # Update apt
+    apt-get update; \
     # Install builder dependencies for node-gyp, ruby gem native extensions
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         git \
         g++ \
@@ -121,12 +129,16 @@ RUN \
     --mount=type=cache,id=${TARGETPLATFORM}-/var/lib/apt,target=/var/lib/apt,sharing=locked \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
+    # Update apt
+    apt-get update; \
     # Install ruby gems dependencies
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libicu-dev \
         libidn-dev \
         libpq-dev \
-    ; \
+    ;
+
+RUN set -eux; \
     # Install gems
     bundle install --no-cache;
 
@@ -137,8 +149,13 @@ ADD package.json yarn.lock ${MASTODON_HOME}/
 
 RUN set -eux; \
     # Download and install yarn packages
-    yarn install --frozen-lockfile --network-timeout 600000; \
-    yarn cache clean --all;
+    case "${NODE_ENV}" in \
+        production) yarn install --frozen-lockfile --network-timeout 600000;; \
+        *) yarn install --network-timeout 600000;; \
+    esac; \
+    yarn cache clean --all; \
+    # Remove tmp files from node
+    rm -rf .yarn* /tmp/* /usr/local/share/.cache;
 
 ########################################################################################################################
 FROM base
@@ -178,16 +195,10 @@ ENV PATH="${PATH}:${MASTODON_HOME}/bin" \
 USER mastodon
 
 RUN set -eux; \
-    # assets:precompile when RAILS_ENV is not development
-    case "${RAILS_ENV}" in \
-        development) exit 0;; \
-        *) \
-            # Precompile assets
-            OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile; \
-            # Remove tmp files from assets:precompile
-            rm -rf /tmp/* tmp/* log/* .cache/*; \
-        ;; \
-    esac;
+    # Precompile assets
+    OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile; \
+    # Remove tmp files from assets:precompile
+    rm -rf /tmp/* tmp/* log/* .cache/*;
 
 # Set the work dir and the container entry point
 ENTRYPOINT ["/usr/bin/tini", "--"]
