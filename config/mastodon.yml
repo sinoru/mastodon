@@ -2,6 +2,9 @@ shared:
   statuses:
     max_characters: 500
     url_placeholder_characters: 23
+    max_media_attachments:
+      local: 4
+      remote: 16
 
   polls:
     max_options: 4

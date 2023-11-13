@@ -54,7 +54,7 @@ class REST::InstanceSerializer < ActiveModel::Serializer
 
       statuses: {
         max_characters: Rails.configuration.x.mastodon.statuses[:max_characters],
-        max_media_attachments: 4,
+        max_media_attachments: Rails.configuration.x.mastodon.statuses[:max_media_attachments][:local],
         characters_reserved_per_url: Rails.configuration.x.mastodon.statuses[:url_placeholder_characters],
       },
 
