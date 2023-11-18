@@ -14,6 +14,7 @@ import { ReactComponent as CloseIcon } from '@material-symbols/svg-600/outlined/
 import AutosuggestInput from 'mastodon/components/autosuggest_input';
 import { Icon }  from 'mastodon/components/icon';
 import { IconButton } from 'mastodon/components/icon_button';
+import { instanceConfiguration } from 'mastodon/initial_state';
 
 const messages = defineMessages({
   option_placeholder: { id: 'compose_form.poll.option_placeholder', defaultMessage: 'Choice {number}' },
@@ -96,7 +97,7 @@ class OptionIntl extends PureComponent {
 
           <AutosuggestInput
             placeholder={intl.formatMessage(messages.option_placeholder, { number: index + 1 })}
-            maxLength={50}
+            maxLength={instanceConfiguration.polls.max_characters_per_option}
             value={title}
             lang={lang}
             spellCheck
@@ -167,7 +168,7 @@ class PollForm extends ImmutablePureComponent {
         </ul>
 
         <div className='poll__footer'>
-          <button type='button' disabled={options.size >= 4} className='button button-secondary' onClick={this.handleAddOption}><Icon id='plus' icon={AddIcon} /> <FormattedMessage {...messages.add_option} /></button>
+          <button type='button' disabled={options.size >= instanceConfiguration.polls.max_options} className='button button-secondary' onClick={this.handleAddOption}><Icon id='plus' icon={AddIcon} /> <FormattedMessage {...messages.add_option} /></button>
 
           {/* eslint-disable-next-line jsx-a11y/no-onchange */}
           <select value={expiresIn} onChange={this.handleSelectDuration}>

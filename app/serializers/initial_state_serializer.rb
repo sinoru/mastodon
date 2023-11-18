@@ -110,6 +110,12 @@ class InitialStateSerializer < ActiveModel::Serializer
     {
       statuses: {
         max_characters: StatusLengthValidator::MAX_CHARS,
+        max_media_attachments: 4,
+      },
+
+      polls: {
+        max_options: PollValidator::MAX_OPTIONS,
+        max_characters_per_option: PollValidator::MAX_OPTION_CHARS,
       },
     }
   end

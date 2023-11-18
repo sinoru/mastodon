@@ -48,11 +48,19 @@
 /**
  * @typedef InitialStateInstanceConfiguration
  * @property {InitialStateInstanceConfigurationStatuses} statuses
+ * @property {InitialStateInstanceConfigurationPolls} polls
  */
 
 /**
  * @typedef InitialStateInstanceConfigurationStatuses
  * @property {number} max_characters
+ * @property {number} max_media_attachments
+ */
+
+/**
+ * @typedef InitialStateInstanceConfigurationPolls
+ * @property {number} max_options
+ * @property {number} max_characters_per_option
  */
 
 /**
