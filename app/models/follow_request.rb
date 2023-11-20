@@ -13,6 +13,7 @@
 #  uri               :string
 #  notify            :boolean          default(FALSE), not null
 #  languages         :string           is an Array
+#  hide_from_home    :boolean          default(FALSE), not null
 #
 
 class FollowRequest < ApplicationRecord
@@ -32,7 +33,7 @@ class FollowRequest < ApplicationRecord
   validates :languages, language: true
 
   def authorize!
-    follow = account.follow!(target_account, reblogs: show_reblogs, notify: notify, languages: languages, uri: uri, bypass_limit: true)
+    follow = account.follow!(target_account, reblogs: show_reblogs, hide_from_home: hide_from_home, notify: notify, languages: languages, uri: uri, bypass_limit: true)
     ListAccount.where(follow_request: self).update_all(follow_request_id: nil, follow_id: follow.id) # rubocop:disable Rails/SkipsModelValidations
     MergeWorker.perform_async(target_account.id, account.id) if account.local?
     destroy!

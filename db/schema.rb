@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_06_183200) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_20_110535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -490,6 +490,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_06_183200) do
     t.string "uri"
     t.boolean "notify", default: false, null: false
     t.string "languages", array: true
+    t.boolean "hide_from_home", default: false, null: false
     t.index ["account_id", "target_account_id"], name: "index_follow_requests_on_account_id_and_target_account_id", unique: true
   end
 
@@ -502,6 +503,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_06_183200) do
     t.string "uri"
     t.boolean "notify", default: false, null: false
     t.string "languages", array: true
+    t.boolean "hide_from_home", default: false, null: false
     t.index ["account_id", "target_account_id"], name: "index_follows_on_account_id_and_target_account_id", unique: true
     t.index ["target_account_id"], name: "index_follows_on_target_account_id"
   end
