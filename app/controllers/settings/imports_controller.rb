@@ -16,7 +16,7 @@ class Settings::ImportsController < Settings::BaseController
   }.freeze
 
   TYPE_TO_HEADERS_MAP = {
-    following: ['Account address', 'Show boosts', 'Notify on new posts', 'Languages'],
+    following: ['Account address', 'Show boosts', 'Hide posts from home', 'Notify on new posts', 'Languages'],
     blocking: false,
     muting: ['Account address', 'Hide notifications'],
     domain_blocking: false,
@@ -42,7 +42,7 @@ class Settings::ImportsController < Settings::BaseController
           @bulk_import.rows.find_each do |row|
             case @bulk_import.type.to_sym
             when :following
-              csv << [row.data['acct'], row.data.fetch('show_reblogs', true), row.data.fetch('notify', false), row.data['languages']&.join(', ')]
+              csv << [row.data['acct'], row.data.fetch('show_reblogs', true), row.data.fetch('hide_from_home', false), row.data.fetch('notify', false), row.data['languages']&.join(', ')]
             when :blocking
               csv << [row.data['acct']]
             when :muting

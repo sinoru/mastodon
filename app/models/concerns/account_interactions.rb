@@ -8,6 +8,7 @@ module AccountInteractions
       Follow.where(target_account_id: target_account_ids, account_id: account_id).each_with_object({}) do |follow, mapping|
         mapping[follow.target_account_id] = {
           reblogs: follow.show_reblogs?,
+          hide_from_home: follow.hide_from_home?,
           notify: follow.notify?,
           languages: follow.languages,
         }
@@ -38,6 +39,7 @@ module AccountInteractions
       FollowRequest.where(target_account_id: target_account_ids, account_id: account_id).each_with_object({}) do |follow_request, mapping|
         mapping[follow_request.target_account_id] = {
           reblogs: follow_request.show_reblogs?,
+          hide_from_home: follow_request.hide_from_home?,
           notify: follow_request.notify?,
           languages: follow_request.languages,
         }
@@ -112,13 +114,14 @@ module AccountInteractions
     has_many :announcement_mutes, dependent: :destroy
   end
 
-  def follow!(other_account, reblogs: nil, notify: nil, languages: nil, uri: nil, rate_limit: false, bypass_limit: false)
-    rel = active_relationships.create_with(show_reblogs: reblogs.nil? ? true : reblogs, notify: notify.nil? ? false : notify, languages: languages, uri: uri, rate_limit: rate_limit, bypass_follow_limit: bypass_limit)
+  def follow!(other_account, reblogs: nil, hide_from_home: nil, notify: nil, languages: nil, uri: nil, rate_limit: false, bypass_limit: false)
+    rel = active_relationships.create_with(show_reblogs: reblogs.nil? ? true : reblogs, hide_from_home: hide_from_home.nil? ? false : hide_from_home, notify: notify.nil? ? false : notify, languages: languages, uri: uri, rate_limit: rate_limit, bypass_follow_limit: bypass_limit)
                               .find_or_create_by!(target_account: other_account)
 
-    rel.show_reblogs = reblogs   unless reblogs.nil?
-    rel.notify       = notify    unless notify.nil?
-    rel.languages    = languages unless languages.nil?
+    rel.show_reblogs   = reblogs        unless reblogs.nil?
+    rel.hide_from_home = hide_from_home unless hide_from_home.nil?
+    rel.notify         = notify         unless notify.nil?
+    rel.languages      = languages      unless languages.nil?
 
     rel.save! if rel.changed?
 
@@ -127,13 +130,14 @@ module AccountInteractions
     rel
   end
 
-  def request_follow!(other_account, reblogs: nil, notify: nil, languages: nil, uri: nil, rate_limit: false, bypass_limit: false)
-    rel = follow_requests.create_with(show_reblogs: reblogs.nil? ? true : reblogs, notify: notify.nil? ? false : notify, uri: uri, languages: languages, rate_limit: rate_limit, bypass_follow_limit: bypass_limit)
+  def request_follow!(other_account, reblogs: nil, hide_from_home: nil, notify: nil, languages: nil, uri: nil, rate_limit: false, bypass_limit: false)
+    rel = follow_requests.create_with(show_reblogs: reblogs.nil? ? true : reblogs, hide_from_home: hide_from_home.nil? ? false : hide_from_home, notify: notify.nil? ? false : notify, uri: uri, languages: languages, rate_limit: rate_limit, bypass_follow_limit: bypass_limit)
                          .find_or_create_by!(target_account: other_account)
 
-    rel.show_reblogs = reblogs   unless reblogs.nil?
-    rel.notify       = notify    unless notify.nil?
-    rel.languages    = languages unless languages.nil?
+    rel.show_reblogs   = reblogs        unless reblogs.nil?
+    rel.hide_from_home = hide_from_home unless hide_from_home.nil?
+    rel.notify         = notify         unless notify.nil?
+    rel.languages      = languages      unless languages.nil?
 
     rel.save! if rel.changed?
 
@@ -233,6 +237,10 @@ module AccountInteractions
 
   def muting_reblogs?(other_account)
     active_relationships.where(target_account: other_account, show_reblogs: false).exists?
+  end
+
+  def muting_from_home_only?(other_account)
+    active_relationships.where(target_account: other_account, hide_from_home: true).exists?
   end
 
   def requested?(other_account)

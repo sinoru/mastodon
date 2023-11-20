@@ -50,7 +50,7 @@ class BulkImportService < BaseService
 
           # Since we're updating the settings of an existing relationship, we can safely call
           # FollowService directly
-          FollowService.new.call(@account, followee, reblogs: row.data['show_reblogs'], notify: row.data['notify'], languages: row.data['languages'])
+          FollowService.new.call(@account, followee, reblogs: row.data['show_reblogs'], hide_from_home: row.data['hide_from_home'].presence || false, notify: row.data['notify'], languages: row.data['languages'])
         end
       end
 

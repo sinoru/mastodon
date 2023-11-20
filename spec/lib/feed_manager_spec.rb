@@ -190,6 +190,18 @@ RSpec.describe FeedManager do
         reblog = Fabricate(:status, reblog: status, account: jeff)
         expect(described_class.instance.filter?(:home, reblog, alice)).to be false
       end
+
+      it 'returns false for post from followee with hide from home disabled' do
+        status = Fabricate(:status, text: 'Hello world', account: alice)
+        bob.follow!(alice, hide_from_home: false)
+        expect(described_class.instance.filter?(:home, status, bob)).to be false
+      end
+
+      it 'returns true for post from followee with hide from home enabled' do
+        status = Fabricate(:status, text: 'Hello world', account: alice)
+        bob.follow!(alice, hide_from_home: true)
+        expect(described_class.instance.filter?(:home, status, bob)).to be true
+      end
     end
 
     context 'with mentions feed' do

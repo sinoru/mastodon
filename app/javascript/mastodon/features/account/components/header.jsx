@@ -54,6 +54,8 @@ const messages = defineMessages({
   unblockDomain: { id: 'account.unblock_domain', defaultMessage: 'Unblock domain {domain}' },
   hideReblogs: { id: 'account.hide_reblogs', defaultMessage: 'Hide boosts from @{name}' },
   showReblogs: { id: 'account.show_reblogs', defaultMessage: 'Show boosts from @{name}' },
+  hideFromHome: { id: 'account.hide_from_home', defaultMessage: 'Hide @{name} posts from home' },
+  showFromHome: { id: 'account.show_from_home', defaultMessage: 'Show @{name} posts from home' },
   enableNotifications: { id: 'account.enable_notifications', defaultMessage: 'Notify me when @{name} posts' },
   disableNotifications: { id: 'account.disable_notifications', defaultMessage: 'Stop notifying me when @{name} posts' },
   pins: { id: 'navigation_bar.pins', defaultMessage: 'Pinned posts' },
@@ -101,6 +103,7 @@ class Header extends ImmutablePureComponent {
     onMention: PropTypes.func.isRequired,
     onDirect: PropTypes.func.isRequired,
     onReblogToggle: PropTypes.func.isRequired,
+    onHideFromHomeToggle: PropTypes.func.isRequired,
     onNotifyToggle: PropTypes.func.isRequired,
     onReport: PropTypes.func.isRequired,
     onMute: PropTypes.func.isRequired,
@@ -328,6 +331,12 @@ class Header extends ImmutablePureComponent {
             menu.push({ text: intl.formatMessage(messages.hideReblogs, { name: account.get('username') }), action: this.props.onReblogToggle });
           } else {
             menu.push({ text: intl.formatMessage(messages.showReblogs, { name: account.get('username') }), action: this.props.onReblogToggle });
+          }
+
+          if (account.getIn(['relationship', 'hiding_from_home'])) {
+            menu.push({ text: intl.formatMessage(messages.showFromHome, { name: account.get('username') }), action: this.props.onHideFromHomeToggle });
+          } else {
+            menu.push({ text: intl.formatMessage(messages.hideFromHome, { name: account.get('username') }), action: this.props.onHideFromHomeToggle });
           }
 
           menu.push({ text: intl.formatMessage(messages.languages), action: this.props.onChangeLanguages });

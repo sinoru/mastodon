@@ -67,7 +67,7 @@ RSpec.describe BulkImportService do
 
       let!(:rows) do
         [
-          { 'acct' => 'followed@foo.bar', 'show_reblogs' => false, 'notify' => true, 'languages' => ['en'] },
+          { 'acct' => 'followed@foo.bar', 'show_reblogs' => false, 'hide_from_home' => true, 'notify' => true, 'languages' => ['en'] },
           { 'acct' => 'user@foo.bar' },
           { 'acct' => 'unknown@unknown.bar' },
         ].map { |data| import.rows.create!(data: data) }
@@ -84,7 +84,7 @@ RSpec.describe BulkImportService do
       end
 
       it 'updates the existing follow relationship as expected' do
-        expect { subject.call(import) }.to change { Follow.where(account: account, target_account: followed).pick(:show_reblogs, :notify, :languages) }.from([true, false, nil]).to([false, true, ['en']])
+        expect { subject.call(import) }.to change { Follow.where(account: account, target_account: followed).pick(:show_reblogs, :hide_from_home, :notify, :languages) }.from([true, false, false, nil]).to([false, true, true, ['en']])
       end
 
       it 'enqueues workers for the expected rows' do

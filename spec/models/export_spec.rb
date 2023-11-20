@@ -37,8 +37,8 @@ describe Export do
       results = export.strip.split("\n")
 
       expect(results.size).to eq 3
-      expect(results.first).to eq 'Account address,Show boosts,Notify on new posts,Languages'
-      expect(results.second).to eq 'one@local.host,true,false,'
+      expect(results.first).to eq 'Account address,Show boosts,Hide posts from home,Notify on new posts,Languages'
+      expect(results.second).to eq 'one@local.host,true,false,false,'
     end
   end
 

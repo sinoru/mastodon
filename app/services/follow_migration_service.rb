@@ -11,10 +11,11 @@ class FollowMigrationService < FollowService
 
     @original_follow = source_account.active_relationships.find_by(target_account: old_target_account)
     reblogs          = @original_follow&.show_reblogs?
+    hide_from_home   = @original_follow&.hide_from_home?
     notify           = @original_follow&.notify?
     languages        = @original_follow&.languages
 
-    super(source_account, target_account, reblogs: reblogs, notify: notify, languages: languages, bypass_locked: bypass_locked, bypass_limit: true)
+    super(source_account, target_account, reblogs: reblogs, hide_from_home: hide_from_home, notify: notify, languages: languages, bypass_locked: bypass_locked, bypass_limit: true)
   end
 
   private

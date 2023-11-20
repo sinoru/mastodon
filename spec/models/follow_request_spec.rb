@@ -29,7 +29,7 @@ RSpec.describe FollowRequest do
 
       follow_request.authorize!
 
-      expect(account).to have_received(:follow!).with(target_account, reblogs: true, notify: false, uri: follow_request.uri, languages: nil, bypass_limit: true)
+      expect(account).to have_received(:follow!).with(target_account, reblogs: true, hide_from_home: false, notify: false, uri: follow_request.uri, languages: nil, bypass_limit: true)
       expect(MergeWorker).to have_received(:perform_async).with(target_account.id, account.id)
       expect(follow_request).to have_received(:destroy!)
     end
@@ -46,6 +46,20 @@ RSpec.describe FollowRequest do
       follow_request.authorize!
       target = follow_request.target_account
       expect(follow_request.account.muting_reblogs?(target)).to be true
+    end
+
+    it 'correctly passes hide_from_home when false' do
+      follow_request = Fabricate.create(:follow_request, hide_from_home: false)
+      follow_request.authorize!
+      target = follow_request.target_account
+      expect(follow_request.account.muting_from_home_only?(target)).to be false
+    end
+
+    it 'correctly passes hide_from_home when true' do
+      follow_request = Fabricate.create(:follow_request, hide_from_home: true)
+      follow_request.authorize!
+      target = follow_request.target_account
+      expect(follow_request.account.muting_from_home_only?(target)).to be true
     end
   end
 

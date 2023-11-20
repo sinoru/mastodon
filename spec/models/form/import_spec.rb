@@ -299,6 +299,11 @@ RSpec.describe Form::Import do
       { 'acct' => 'user@test.com', 'show_reblogs' => true, 'notify' => true, 'languages' => %w(en fr) },
     ]
 
+    it_behaves_like 'on successful import', 'following', 'merge', 'following_accounts_with_hide_from_home.csv', [
+      { 'acct' => 'user@example.com', 'show_reblogs' => true, 'hide_from_home' => false, 'notify' => false, 'languages' => nil },
+      { 'acct' => 'user@test.com', 'show_reblogs' => true, 'hide_from_home' => true, 'notify' => true, 'languages' => %w(en fr) },
+    ]
+
     it_behaves_like 'on successful import', 'muting', 'merge', 'muted_accounts.csv', [
       { 'acct' => 'user@example.com', 'hide_notifications' => true },
       { 'acct' => 'user@test.com', 'hide_notifications' => false },

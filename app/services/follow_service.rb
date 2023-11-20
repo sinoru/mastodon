@@ -10,6 +10,7 @@ class FollowService < BaseService
   # @param [Account] target_account Account to follow
   # @param [Hash] options
   # @option [Boolean] :reblogs Whether or not to show reblogs, defaults to true
+  # @option [Boolean] :hide_from_home Whether or not to hide posts from home, defaults to false
   # @option [Boolean] :notify Whether to create notifications about new posts, defaults to false
   # @option [Array<String>] :languages Which languages to allow on the home feed from this account, defaults to all
   # @option [Boolean] :bypass_locked
@@ -91,6 +92,6 @@ class FollowService < BaseService
   end
 
   def follow_options
-    @options.slice(:reblogs, :notify, :languages)
+    @options.slice(:reblogs, :hide_from_home, :notify, :languages)
   end
 end

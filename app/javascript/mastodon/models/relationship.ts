@@ -22,6 +22,7 @@ const RelationshipFactory = Record<RelationshipShape>({
   requested_by: false,
   requested: false,
   showing_reblogs: false,
+  hiding_from_home: false,
 });
 
 export function createRelationship(attributes: Partial<RelationshipShape>) {

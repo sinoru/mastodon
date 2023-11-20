@@ -25,7 +25,7 @@ RSpec.describe BulkImportRowService do
       it 'calls FollowService with the expected arguments and returns true' do
         expect(subject.call(import_row)).to be true
 
-        expect(service_double).to have_received(:call).with(account, target_account, { reblogs: nil, notify: nil, languages: nil })
+        expect(service_double).to have_received(:call).with(account, target_account, { reblogs: nil, hide_from_home: nil, notify: nil, languages: nil })
       end
     end
 

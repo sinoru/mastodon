@@ -24,7 +24,7 @@ class BulkImportRowService
 
     case @type
     when :following
-      FollowService.new.call(@account, @target_account, reblogs: @data['show_reblogs'], notify: @data['notify'], languages: @data['languages'])
+      FollowService.new.call(@account, @target_account, reblogs: @data['show_reblogs'], hide_from_home: @data['hide_from_home'], notify: @data['notify'], languages: @data['languages'])
     when :blocking
       BlockService.new.call(@account, @target_account)
     when :muting

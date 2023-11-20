@@ -112,6 +112,14 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
     }
   },
 
+  onHideFromHomeToggle (account) {
+    if (account.getIn(['relationship', 'hiding_from_home'])) {
+      dispatch(followAccount(account.get('id'), { hide_from_home: false }));
+    } else {
+      dispatch(followAccount(account.get('id'), { hide_from_home: true }));
+    }
+  },
+
   onEndorseToggle (account) {
     if (account.getIn(['relationship', 'endorsed'])) {
       dispatch(unpinAccount(account.get('id')));

@@ -10,9 +10,10 @@ class RefollowWorker
     return unless target_account.activitypub?
 
     target_account.passive_relationships.where(account: Account.where(domain: nil)).includes(:account).reorder(nil).find_each do |follow|
-      reblogs   = follow.show_reblogs?
-      notify    = follow.notify?
-      languages = follow.languages
+      reblogs        = follow.show_reblogs?
+      hide_from_home = follow.hide_from_home?
+      notify         = follow.notify?
+      languages      = follow.languages
 
       # Locally unfollow remote account
       follower = follow.account
@@ -20,7 +21,7 @@ class RefollowWorker
 
       # Schedule re-follow
       begin
-        FollowService.new.call(follower, target_account, reblogs: reblogs, notify: notify, languages: languages, bypass_limit: true)
+        FollowService.new.call(follower, target_account, reblogs: reblogs, hide_from_home: hide_from_home, notify: notify, languages: languages, bypass_limit: true)
       rescue Mastodon::NotPermittedError, ActiveRecord::RecordNotFound, Mastodon::UnexpectedResponseError, HTTP::Error, OpenSSL::SSL::SSLError
         next
       end

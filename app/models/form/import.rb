@@ -13,7 +13,7 @@ class Form::Import
   ROWS_PROCESSING_LIMIT = 20_000
 
   EXPECTED_HEADERS_BY_TYPE = {
-    following: ['Account address', 'Show boosts', 'Notify on new posts', 'Languages'],
+    following: ['Account address', 'Show boosts', 'Hide posts from home', 'Notify on new posts', 'Languages'],
     blocking: ['Account address'],
     muting: ['Account address', 'Hide notifications'],
     domain_blocking: ['#domain'],
@@ -26,6 +26,7 @@ class Form::Import
   ATTRIBUTE_BY_HEADER = {
     'Account address' => 'acct',
     'Show boosts' => 'show_reblogs',
+    'Hide posts from home' => 'hide_from_home',
     'Notify on new posts' => 'notify',
     'Languages' => 'languages',
     'Hide notifications' => 'hide_notifications',
@@ -44,7 +45,7 @@ class Form::Import
 
   def guessed_type
     return :muting if csv_headers_match?('Hide notifications')
-    return :following if csv_headers_match?('Show boosts') || csv_headers_match?('Notify on new posts') || csv_headers_match?('Languages')
+    return :following if csv_headers_match?('Show boosts') || csv_headers_match?('Hide posts from home') || csv_headers_match?('Notify on new posts') || csv_headers_match?('Languages')
     return :following if file_name_matches?('follows') || file_name_matches?('following_accounts')
     return :blocking if file_name_matches?('blocks') || file_name_matches?('blocked_accounts')
     return :muting if file_name_matches?('mutes') || file_name_matches?('muted_accounts')
@@ -105,7 +106,7 @@ class Form::Import
 
     csv_converter = lambda do |field, field_info|
       case field_info.header
-      when 'Show boosts', 'Notify on new posts', 'Hide notifications'
+      when 'Show boosts', 'Hide posts from home', 'Notify on new posts', 'Hide notifications'
         ActiveModel::Type::Boolean.new.cast(field)
       when 'Languages'
         field&.split(',')&.map(&:strip)&.presence

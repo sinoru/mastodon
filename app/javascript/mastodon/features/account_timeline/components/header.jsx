@@ -23,6 +23,7 @@ class Header extends ImmutablePureComponent {
     onMention: PropTypes.func.isRequired,
     onDirect: PropTypes.func.isRequired,
     onReblogToggle: PropTypes.func.isRequired,
+    onHideFromHomeToggle: PropTypes.func.isRequired,
     onReport: PropTypes.func.isRequired,
     onMute: PropTypes.func.isRequired,
     onBlockDomain: PropTypes.func.isRequired,
@@ -61,6 +62,10 @@ class Header extends ImmutablePureComponent {
 
   handleReblogToggle = () => {
     this.props.onReblogToggle(this.props.account);
+  };
+
+  handleHideFromHomeToggle = () => {
+    this.props.onHideFromHomeToggle(this.props.account);
   };
 
   handleNotifyToggle = () => {
@@ -130,6 +135,7 @@ class Header extends ImmutablePureComponent {
           onMention={this.handleMention}
           onDirect={this.handleDirect}
           onReblogToggle={this.handleReblogToggle}
+          onHideFromHomeToggle={this.handleHideFromHomeToggle}
           onNotifyToggle={this.handleNotifyToggle}
           onReport={this.handleReport}
           onMute={this.handleMute}

@@ -155,11 +155,11 @@ RSpec.describe Settings::ImportsController do
       let!(:rows) do
         [
           { 'acct' => 'foo@bar' },
-          { 'acct' => 'user@bar', 'show_reblogs' => false, 'notify' => true, 'languages' => %w(fr de) },
+          { 'acct' => 'user@bar', 'show_reblogs' => false, 'hide_from_home' => true, 'notify' => true, 'languages' => %w(fr de) },
         ].map { |data| Fabricate(:bulk_import_row, bulk_import: bulk_import, data: data) }
       end
 
-      include_examples 'export failed rows', "Account address,Show boosts,Notify on new posts,Languages\nfoo@bar,true,false,\nuser@bar,false,true,\"fr, de\"\n"
+      include_examples 'export failed rows', "Account address,Show boosts,Hide posts from home,Notify on new posts,Languages\nfoo@bar,true,false,false,\nuser@bar,false,true,true,\"fr, de\"\n"
     end
 
     context 'with blocks' do

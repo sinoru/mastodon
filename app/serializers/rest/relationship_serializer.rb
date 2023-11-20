@@ -3,8 +3,8 @@
 class REST::RelationshipSerializer < ActiveModel::Serializer
   # Please update `app/javascript/mastodon/api_types/relationships.ts` when making changes to the attributes
 
-  attributes :id, :following, :showing_reblogs, :notifying, :languages, :followed_by,
-             :blocking, :blocked_by, :muting, :muting_notifications,
+  attributes :id, :following, :showing_reblogs, :hiding_from_home, :notifying, :languages,
+             :followed_by, :blocking, :blocked_by, :muting, :muting_notifications,
              :requested, :requested_by, :domain_blocking, :endorsed, :note
 
   def id
@@ -18,6 +18,12 @@ class REST::RelationshipSerializer < ActiveModel::Serializer
   def showing_reblogs
     (instance_options[:relationships].following[object.id] || {})[:reblogs] ||
       (instance_options[:relationships].requested[object.id] || {})[:reblogs] ||
+      false
+  end
+
+  def hiding_from_home
+    (instance_options[:relationships].following[object.id] || {})[:hide_from_home] ||
+      (instance_options[:relationships].requested[object.id] || {})[:hide_from_home] ||
       false
   end
 

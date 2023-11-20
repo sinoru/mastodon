@@ -133,7 +133,7 @@ describe '/api/v1/accounts' do
       let(:locked) { false }
 
       before do
-        user.account.follow!(other_account, reblogs: false, notify: false)
+        user.account.follow!(other_account, reblogs: false, hide_from_home: false, notify: false)
       end
 
       it 'changes reblogs option' do
@@ -142,6 +142,18 @@ describe '/api/v1/accounts' do
         expect(body_as_json).to include({
           following: true,
           showing_reblogs: true,
+          hiding_from_home: false,
+          notifying: false,
+        })
+      end
+
+      it 'changes hide_from_home option' do
+        post "/api/v1/accounts/#{other_account.id}/follow", headers: headers, params: { hide_from_home: true }
+
+        expect(body_as_json).to include({
+          following: true,
+          showing_reblogs: false,
+          hiding_from_home: true,
           notifying: false,
         })
       end
@@ -152,6 +164,7 @@ describe '/api/v1/accounts' do
         expect(body_as_json).to include({
           following: true,
           showing_reblogs: false,
+          hiding_from_home: false,
           notifying: true,
         })
       end
@@ -162,6 +175,7 @@ describe '/api/v1/accounts' do
         expect(body_as_json).to include({
           following: true,
           showing_reblogs: false,
+          hiding_from_home: false,
           notifying: false,
           languages: match_array(%w(en es)),
         })
