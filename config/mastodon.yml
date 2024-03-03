@@ -1,5 +1,0 @@
-shared:
-  statuses:
-    max_media_attachments:
-      local: 4
-      remote: 16

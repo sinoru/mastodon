@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Mastodon
+module Glitch
   class Application < Rails::Application
-    config.x.mastodon = config_for(:mastodon)
+    config.x.glitch = config_for(:glitch)
   end
 end
